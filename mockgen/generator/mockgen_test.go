@@ -1,4 +1,4 @@
-package main
+package generator
 
 import (
 	"fmt"
@@ -231,7 +231,7 @@ func TestGenerateMockInterface_Helper(t *testing.T) {
 		},
 	} {
 		t.Run(test.Name, func(t *testing.T) {
-			g := generator{}
+			g := Generator{}
 
 			if len(test.Methods) == 0 {
 				test.Methods = []*model.Method{
@@ -245,7 +245,7 @@ func TestGenerateMockInterface_Helper(t *testing.T) {
 				intf.AddMethod(m)
 			}
 
-			if err := g.GenerateMockInterface(intf, "somepackage"); err != nil {
+			if err := g.GenerateMockInterface(intf, "somepackage", false); err != nil {
 				t.Fatal(err)
 			}
 
@@ -330,7 +330,7 @@ func TestGetArgNames(t *testing.T) {
 		},
 	} {
 		t.Run(testCase.name, func(t *testing.T) {
-			g := generator{}
+			g := Generator{}
 
 			result := g.getArgNames(testCase.method, true)
 			if !reflect.DeepEqual(result, testCase.expected) {
@@ -378,7 +378,7 @@ func TestParsePackageImport_FallbackGoPath(t *testing.T) {
 	}
 	t.Setenv("GOPATH", goPath)
 	t.Setenv("GO111MODULE", "on")
-	pkgPath, err := parsePackageImport(srcDir)
+	pkgPath, err := ParsePackageImport(srcDir)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -405,7 +405,7 @@ func TestParsePackageImport_FallbackMultiGoPath(t *testing.T) {
 	goPaths := strings.Join(goPathList, string(os.PathListSeparator))
 	t.Setenv("GOPATH", goPaths)
 	t.Setenv("GO111MODULE", "on")
-	pkgPath, err := parsePackageImport(srcDir)
+	pkgPath, err := ParsePackageImport(srcDir)
 	if err != nil {
 		t.Fatal(err)
 	}

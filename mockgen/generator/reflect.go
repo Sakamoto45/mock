@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package generator
 
 // This file contains the model construction by reflection.
 
@@ -40,8 +40,8 @@ var (
 	buildFlags = flag.String("build_flags", "", "(reflect mode) Additional flags for go build.")
 )
 
-// reflectMode generates mocks via reflection on an interface.
-func reflectMode(importPath string, symbols []string) (*model.Package, error) {
+// ReflectMode generates mocks via reflection on an interface.
+func ReflectMode(importPath string, symbols []string) (*model.Package, error) {
 	if *execOnly != "" {
 		return run(*execOnly)
 	}

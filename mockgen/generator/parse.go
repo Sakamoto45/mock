@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package generator
 
 // This file contains the model construction by parsing source files.
 
@@ -35,14 +35,14 @@ import (
 	"go.uber.org/mock/mockgen/model"
 )
 
-// sourceMode generates mocks via source file.
-func sourceMode(source string) (*model.Package, error) {
+// SourceMode generates mocks via source file.
+func SourceMode(source string, imports string, excludeInterfaces string, auxFiles string) (*model.Package, error) {
 	srcDir, err := filepath.Abs(filepath.Dir(source))
 	if err != nil {
 		return nil, fmt.Errorf("failed getting source directory: %v", err)
 	}
 
-	packageImport, err := parsePackageImport(srcDir)
+	packageImport, err := ParsePackageImport(srcDir)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +63,8 @@ func sourceMode(source string) (*model.Package, error) {
 
 	// Handle -imports.
 	dotImports := make(map[string]bool)
-	if *imports != "" {
-		for _, kv := range strings.Split(*imports, ",") {
+	if imports != "" {
+		for _, kv := range strings.Split(imports, ",") {
 			eq := strings.Index(kv, "=")
 			k, v := kv[:eq], kv[eq+1:]
 			if k == "." {
@@ -75,12 +75,12 @@ func sourceMode(source string) (*model.Package, error) {
 		}
 	}
 
-	if *excludeInterfaces != "" {
-		p.excludeNamesSet = parseExcludeInterfaces(*excludeInterfaces)
+	if excludeInterfaces != "" {
+		p.excludeNamesSet = parseExcludeInterfaces(excludeInterfaces)
 	}
 
 	// Handle -aux_files.
-	if err := p.parseAuxFiles(*auxFiles); err != nil {
+	if err := p.parseAuxFiles(auxFiles); err != nil {
 		return nil, err
 	}
 	p.addAuxInterfacesFromFile(packageImport, file) // this file
@@ -777,8 +777,8 @@ func isVariadic(f *ast.FuncType) bool {
 	return ok
 }
 
-// packageNameOfDir get package import path via dir
-func packageNameOfDir(srcDir string) (string, error) {
+// PackageNameOfDir get package import path via dir
+func PackageNameOfDir(srcDir string) (string, error) {
 	files, err := os.ReadDir(srcDir)
 	if err != nil {
 		log.Fatal(err)
@@ -795,7 +795,7 @@ func packageNameOfDir(srcDir string) (string, error) {
 		return "", fmt.Errorf("go source file not found %s", srcDir)
 	}
 
-	packageImport, err := parsePackageImport(srcDir)
+	packageImport, err := ParsePackageImport(srcDir)
 	if err != nil {
 		return "", err
 	}

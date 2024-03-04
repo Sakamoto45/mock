@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package generator
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ import (
 	"runtime/debug"
 )
 
-func printModuleVersion() {
+func PrintModuleVersion() {
 	if bi, exists := debug.ReadBuildInfo(); exists {
 		fmt.Println(bi.Main.Version)
 	} else {
